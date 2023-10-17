@@ -1,0 +1,27 @@
+gameExpectedRenderingFps 60
+
+gameBaseDeltaTime 2500
+
+//aquariumBorderLeft
+//aquariumBorderRight
+//aquariumBorderTop
+//aquariumBorderBottom
+
+aquariumCapacity 300
+
+boidMovementSpeed 0.7
+boidRotationSpeed 0.5
+
+boidHitboxSizeX 10
+boidHitboxSizeY 10
+
+boidBorderSightRange 50
+boidOtherBoidSightRange 100
+boidPredatorSightRange 100
+
+boidSpriteScaleX 0.15
+boidSpriteScaleY 0.15
+
+boidCenterRotationMarginOfError 20
+boidMinimumRotationalDifference 10
+boidMaximumRotationalDifference 90
