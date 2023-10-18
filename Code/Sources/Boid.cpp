@@ -18,6 +18,8 @@ mBaseDeltaTime(0),
 mIsTurningLeftDueToBorder(false),
 mIsTurningRightDueToBorder(false),
 mIsTurningLeftDueToPredator(false),
+mBaseColor(255, 255, 255),
+mVaryingColor(0, 0, 0),
 mIsTurningRightDueToPredator(false)
 {
 
@@ -88,6 +90,16 @@ void Boid::setSpriteTexture(sf::Texture &texture)
 void Boid::setSpriteTextureRectangle(sf::IntRect rectangle)
 {
     mSprite.setTextureRect(rectangle);
+}
+
+void Boid::setBaseColor(int red, int green, int blue)
+{
+    mBaseColor = sf::Color(red, green, blue);
+}
+
+void Boid::setVaryingColor(int red, int green, int blue)
+{
+    mVaryingColor = sf::Color(red, green, blue);
 }
 
 Boid::Border Boid::getBordersWithinSightRange(float borderLeft, float borderRight, float borderTop, float borderBottom)
@@ -420,6 +432,49 @@ bool Boid::updateSpinBasedOnBoidsInSightRange(std::vector<Boid *> &allBoids)
     return true;
 }
 
+bool Boid::updateColorBasedOnBoidsInSightRange(std::vector<Boid*> &allBoids)
+{
+    std::vector<Boid *> boidsInSightRange = getBoidsWithinSightRange(allBoids);
+
+    if (boidsInSightRange.size() <= 1)
+    {
+        mVaryingColor = sf::Color(0, 0, 0);
+        return false;
+    }
+
+    float sumOfRedColorFactorsOfBoidsInSightRange = 0;
+    float sumOfGreenColorFactorsOfBoidsInSightRange = 0;
+    float sumOfBlueColorFactorsOfBoidsInSightRange = 0;
+
+    int numberOfBoidsInSightRange = boidsInSightRange.size();
+
+    for (int i = 0; i < numberOfBoidsInSightRange; i++)
+    {
+        if ((boidsInSightRange[i]->mVaryingColor.r == 0 && boidsInSightRange[i]->mVaryingColor.g == 0 && boidsInSightRange[i]->mVaryingColor.b == 0) || boidsInSightRange[i] == this)
+        {
+            sumOfRedColorFactorsOfBoidsInSightRange += boidsInSightRange[i]->mBaseColor.r;
+            sumOfGreenColorFactorsOfBoidsInSightRange += boidsInSightRange[i]->mBaseColor.g;
+            sumOfBlueColorFactorsOfBoidsInSightRange += boidsInSightRange[i]->mBaseColor.b;
+        }
+        else
+        {
+            sumOfRedColorFactorsOfBoidsInSightRange += boidsInSightRange[i]->mVaryingColor.r;
+            sumOfGreenColorFactorsOfBoidsInSightRange += boidsInSightRange[i]->mVaryingColor.g;
+            sumOfBlueColorFactorsOfBoidsInSightRange += boidsInSightRange[i]->mVaryingColor.b;
+        }
+    }
+
+    float averageRedColorFactorsOfBoidsInSightRange = sumOfRedColorFactorsOfBoidsInSightRange/numberOfBoidsInSightRange;
+    float averageGreenColorFactorsOfBoidsInSightRange = sumOfGreenColorFactorsOfBoidsInSightRange/numberOfBoidsInSightRange;
+    float averageBlueColorFactorsOfBoidsInSightRange = sumOfBlueColorFactorsOfBoidsInSightRange/numberOfBoidsInSightRange;
+
+    GlobalFunctions::increaseColorIntensity(averageRedColorFactorsOfBoidsInSightRange, averageGreenColorFactorsOfBoidsInSightRange, averageBlueColorFactorsOfBoidsInSightRange);
+
+    mVaryingColor = sf::Color(averageRedColorFactorsOfBoidsInSightRange, averageGreenColorFactorsOfBoidsInSightRange, averageBlueColorFactorsOfBoidsInSightRange);
+
+    return true;
+}
+
 void Boid::applySpin(float deltaTime)
 {
     mRotation += mSpin * (deltaTime / mBaseDeltaTime);
@@ -461,5 +516,13 @@ void Boid::draw(sf::RenderWindow &window)
 {
     mSprite.setPosition(mPositionX, mPositionY);
     mSprite.setRotation(mRotation);
+    if (mVaryingColor.r == 0 && mVaryingColor.g == 0 && mVaryingColor.b == 0)
+    {
+        mSprite.setColor(mBaseColor);
+    }
+    else
+    {
+        mSprite.setColor(mVaryingColor);
+    }
     window.draw(mSprite);
 }

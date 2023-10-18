@@ -53,6 +53,7 @@ void Aquarium::setAllBoidsProperties()
         mBoids[i]->setSpriteOrigin(100, 100);
         mBoids[i]->setSpriteScale(GameProperties::boidSpriteScaleX, GameProperties::boidSpriteScaleY);
         mBoids[i]->setSpriteTextureRectangle(sf::IntRect(0, 0, 200, 200));
+        mBoids[i]->setBaseColor(GlobalFunctions::getRandomValueInRange(1, 256), GlobalFunctions::getRandomValueInRange(1, 256), GlobalFunctions::getRandomValueInRange(1, 256));
     }
 }
 
@@ -73,7 +74,8 @@ void Aquarium::update(float deltaTime, sf::RenderWindow &window)
                 }
             }
         }
-
+        mBoids[i]->setVaryingColor(0, 0, 0);
+        mBoids[i]->updateColorBasedOnBoidsInSightRange(mBoids);
         mBoids[i]->applySpin(deltaTime);
         mBoids[i]->recalculateForwardDirectionVectorFromRotation();
         mBoids[i]->recalculateLeftDirectionVectorFromRotation();

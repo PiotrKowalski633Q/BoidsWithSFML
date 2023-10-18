@@ -41,6 +41,9 @@ private:
 
     sf::Sprite mSprite;//boid sprite object represents its visuals (mostly texture and its attributes)
 
+    sf::Color mBaseColor;//represents the base RGB color that will multiply the texture
+    sf::Color mVaryingColor;//represents the RGB color dependent on boids in sight range
+
     float mBaseDeltaTime;//what time should the program take for one full update
 
 public:
@@ -64,6 +67,10 @@ public:
     void setSpriteTexture(sf::Texture &texture);
     void setSpriteTextureRectangle(sf::IntRect rectangle);
 
+    //setter for the color objects
+    void setBaseColor(int red, int green, int blue);
+    void setVaryingColor(int red, int green, int blue);
+
     //returns information about whether any of the specified border coordinates are within sight range
     Border getBordersWithinSightRange(float borderLeft, float borderRight, float borderTop, float borderBottom);
 
@@ -78,6 +85,9 @@ public:
     bool updateSpinBasedOnPredator(float predatorPositionX, float predatorPositionY);
     bool updateSpinBasedOnCollisionsWithOtherBoids(std::vector<Boid*> &allBoids);
     bool updateSpinBasedOnBoidsInSightRange(std::vector<Boid*> &allBoids);
+
+    //if there are boids in sight range the mVaryingColor will be the average of these colors
+    bool updateColorBasedOnBoidsInSightRange(std::vector<Boid*> &allBoids);
 
     //adds the mSpin value to mRotation as a way of updating it and then makes sure the mRotation is in <0,360) range
     void applySpin(float deltaTime);
