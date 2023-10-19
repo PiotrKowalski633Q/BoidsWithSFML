@@ -21,7 +21,7 @@ private:
     };
 
     float mPositionX, mPositionY;//boid position on the screen in X,Y coordinates
-    float mHitboxSizeX, mHitboxSizeY;//the hitbox size for collision detection, independent of actual texture size
+    float mHitboxRadius;//the hitbox radius for collision detection, independent of actual texture size
     float mForwardDirectionVectorX, mForwardDirectionVectorY;//a normalized vector starting at boid origin (middle) and pointing towards where the boid should be moving (the same direction as its head indicates)
     float mLeftDirectionVectorX, mLeftDirectionVectorY;//a normalized vector perpendicular to the forward direction vector for vision calculations
 
@@ -52,7 +52,7 @@ public:
 
     //setters for all necessary member variables
     void setPosition(float x, float y);
-    void setHitboxSize(float x, float y);
+    void setHitboxRadius(float r);
     void setRotation(float degrees);
     void setBorderSightRange(float sightRange);
     void setOtherBoidSightRange(float sightRange);
@@ -72,13 +72,13 @@ public:
     void setVaryingColor(int red, int green, int blue);
 
     //returns information about whether any of the specified border coordinates are within sight range
-    Border getBordersWithinSightRange(float borderLeft, float borderRight, float borderTop, float borderBottom);
+    Border getBordersWithinSightRange(float borderLeft, float borderRight, float borderTop, float borderBottom) const;
 
     //returns all boids (including self) that lie within sight range
-    std::vector<Boid *> getBoidsWithinSightRange(std::vector<Boid *> &allBoids);
+    std::vector<Boid *> getBoidsWithinSightRange(std::vector<Boid *> &allBoids) const;
 
     //returns all boids (including self) whose hitboxes intersect with the hitbox of this boid
-    std::vector<Boid *> getBoidsCollidingWithThisOne(std::vector<Boid *> &allBoids);
+    std::vector<Boid *> getBoidsCollidingWithThisOne(std::vector<Boid *> &allBoids) const;
 
     //updates the spin value based on different conditions, returns whether anything was updated, so whether the condition was true
     bool updateSpinBasedOnBorders(float borderLeft, float borderRight, float borderTop, float borderBottom, float centerX, float centerY);

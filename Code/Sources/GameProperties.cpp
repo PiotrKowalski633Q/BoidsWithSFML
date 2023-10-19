@@ -14,8 +14,7 @@ int GameProperties::aquariumCapacity{1};
 float GameProperties::boidMovementSpeed{1};
 float GameProperties::boidRotationSpeed{1};
 
-float GameProperties::boidHitboxSizeX{1};
-float GameProperties::boidHitboxSizeY{1};
+float GameProperties::boidHitboxRadius{1};
 
 float GameProperties::boidBorderSightRange{1};
 float GameProperties::boidOtherBoidSightRange{1};
@@ -72,13 +71,9 @@ void GameProperties::setupFromFile(const std::string &filepath)
         {
             setupFile>>boidRotationSpeed;
         }
-        else if (stringBuffer=="boidHitboxSizeX")
+        else if (stringBuffer=="boidHitboxRadius")
         {
-            setupFile>>boidHitboxSizeX;
-        }
-        else if (stringBuffer=="boidHitboxSizeY")
-        {
-            setupFile>>boidHitboxSizeY;
+            setupFile >> boidHitboxRadius;
         }
         else if (stringBuffer=="boidBorderSightRange")
         {

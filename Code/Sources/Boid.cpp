@@ -3,8 +3,7 @@
 Boid::Boid()
 :mPositionX(0),
 mPositionY(0),
-mHitboxSizeX(0),
-mHitboxSizeY(0),
+mHitboxRadius(0),
 mForwardDirectionVectorX(0),
 mForwardDirectionVectorY(0),
 mRotation(0),
@@ -31,10 +30,9 @@ void Boid::setPosition(float x, float y)
     mPositionY = y;
 }
 
-void Boid::setHitboxSize(float x, float y)
+void Boid::setHitboxRadius(float r)
 {
-    mHitboxSizeX = x;
-    mHitboxSizeY = y;
+    mHitboxRadius = r;
 }
 
 void Boid::setRotation(float degrees)
@@ -102,7 +100,7 @@ void Boid::setVaryingColor(int red, int green, int blue)
     mVaryingColor = sf::Color(red, green, blue);
 }
 
-Boid::Border Boid::getBordersWithinSightRange(float borderLeft, float borderRight, float borderTop, float borderBottom)
+Boid::Border Boid::getBordersWithinSightRange(float borderLeft, float borderRight, float borderTop, float borderBottom) const
 {
     float furthestForwardSightPointX = mPositionX + mForwardDirectionVectorX * mBorderSightRange;
     float furthestForwardSightPointY = mPositionY + mForwardDirectionVectorY * mBorderSightRange;
@@ -135,27 +133,17 @@ Boid::Border Boid::getBordersWithinSightRange(float borderLeft, float borderRigh
     }
 }
 
-std::vector<Boid *> Boid::getBoidsWithinSightRange(std::vector<Boid *> &allBoids)
+std::vector<Boid *> Boid::getBoidsWithinSightRange(std::vector<Boid *> &allBoids) const
 {
     std::vector<Boid *> boidsInSightRange;
 
     float furthestForwardSightPointX = mPositionX + mForwardDirectionVectorX * mOtherBoidSightRange;
     float furthestForwardSightPointY = mPositionY + mForwardDirectionVectorY * mOtherBoidSightRange;
 
-    float furthestLeftSightPointX = mPositionX + mLeftDirectionVectorX * mOtherBoidSightRange;
-    float furthestLeftSightPointY = mPositionY + mLeftDirectionVectorY * mOtherBoidSightRange;
-
-    float furthestRightSightPointX = mPositionX + mLeftDirectionVectorX * -1 * mOtherBoidSightRange;
-    float furthestRightSightPointY = mPositionY + mLeftDirectionVectorY * -1 * mOtherBoidSightRange;
-
     for (int i = 0; i < allBoids.size(); i++)
     {
-        if      (
-                (allBoids[i]->mPositionX <= mPositionX || allBoids[i]->mPositionX <= furthestForwardSightPointX || allBoids[i]->mPositionX <= furthestLeftSightPointX || allBoids[i]->mPositionX <= furthestRightSightPointX) &&
-                (allBoids[i]->mPositionX >= mPositionX || allBoids[i]->mPositionX >= furthestForwardSightPointX || allBoids[i]->mPositionX >= furthestLeftSightPointX || allBoids[i]->mPositionX >= furthestRightSightPointX) &&
-                (allBoids[i]->mPositionY <= mPositionY || allBoids[i]->mPositionY <= furthestForwardSightPointY || allBoids[i]->mPositionY <= furthestLeftSightPointY || allBoids[i]->mPositionY <= furthestRightSightPointY) &&
-                (allBoids[i]->mPositionY >= mPositionY || allBoids[i]->mPositionY >= furthestForwardSightPointY || allBoids[i]->mPositionY >= furthestLeftSightPointY || allBoids[i]->mPositionY >= furthestRightSightPointY)
-                )//condition for other boids to be in sight range
+        float distanceFromFurthestSightPointToOtherBoid = sqrt(pow(allBoids[i]->mPositionX-furthestForwardSightPointX, 2) + pow(allBoids[i]->mPositionY-furthestForwardSightPointY, 2));
+        if (distanceFromFurthestSightPointToOtherBoid <= mOtherBoidSightRange)//condition for other boids to be in sight range
         {
             boidsInSightRange.push_back(allBoids[i]);
         }
@@ -164,37 +152,14 @@ std::vector<Boid *> Boid::getBoidsWithinSightRange(std::vector<Boid *> &allBoids
     return boidsInSightRange;
 }
 
-std::vector<Boid *> Boid::getBoidsCollidingWithThisOne(std::vector<Boid *> &allBoids)
+std::vector<Boid *> Boid::getBoidsCollidingWithThisOne(std::vector<Boid *> &allBoids) const
 {
     std::vector<Boid *> boidsCollidingWithThisOne;
 
-    float selfLeftBorder = mPositionX - (mHitboxSizeX/2);
-    float selfRightBorder = mPositionX + (mHitboxSizeX/2);
-    float selfTopBorder = mPositionY - (mHitboxSizeY/2);
-    float selfBottomBorder = mPositionY + (mHitboxSizeY/2);
-
-    float otherLeftBorder;
-    float otherRightBorder;
-    float otherTopBorder;
-    float otherBottomBorder;
-
     for (int i = 0; i < allBoids.size(); i++)
     {
-        otherLeftBorder = allBoids[i]->mPositionX - (mHitboxSizeX/2);
-        otherRightBorder = allBoids[i]->mPositionX + (mHitboxSizeX/2);
-        otherTopBorder = allBoids[i]->mPositionY - (mHitboxSizeY/2);
-        otherBottomBorder = allBoids[i]->mPositionY + (mHitboxSizeY/2);
-
-        if      (
-                (
-                        (selfLeftBorder <= otherLeftBorder && selfRightBorder >= otherLeftBorder) ||
-                        (otherLeftBorder <= selfLeftBorder && otherRightBorder >= selfLeftBorder)
-                ) &&
-                (
-                        (selfTopBorder <= otherTopBorder && selfBottomBorder >= otherTopBorder) ||
-                        (otherTopBorder <= selfTopBorder && otherBottomBorder >= selfTopBorder)
-                )
-                )//condition for boids to collide
+        float distanceToOtherBoid = sqrt(pow(allBoids[i]->mPositionX-mPositionX, 2) + pow(allBoids[i]->mPositionY-mPositionY, 2));
+        if (distanceToOtherBoid <= mHitboxRadius)//condition for boids to collide
         {
             boidsCollidingWithThisOne.push_back(allBoids[i]);
         }

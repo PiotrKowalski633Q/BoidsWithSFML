@@ -21,9 +21,9 @@ float GlobalFunctions::getObjectRotationFromDirectionVector(float directionVecto
 
 void GlobalFunctions::increaseColorIntensity(float &r, float &g, float &b)
 {
-    if (r < g && r < b)//Red is the smallest RGB component of mVaryingColor
+    if (r < g && r < b)//Red is the smallest RGB component
     {
-        r = 0;
+        r = r/2;
         if (g < b)
         {
             b = 255;
@@ -33,9 +33,9 @@ void GlobalFunctions::increaseColorIntensity(float &r, float &g, float &b)
             g = 255;
         }
     }
-    else if (g < b)//Green is the smallest RGB component of mVaryingColor
+    else if (g < b)//Green is the smallest RGB component
     {
-        g = 0;
+        g = g/2;
         if (r < b)
         {
             b = 255;
@@ -45,9 +45,9 @@ void GlobalFunctions::increaseColorIntensity(float &r, float &g, float &b)
             r = 255;
         }
     }
-    else//Blue is the smallest RGB component of mVaryingColor
+    else//Blue is the smallest RGB component
     {
-        b = 0;
+        b = b/2;
         if (r < g)
         {
             g = 255;

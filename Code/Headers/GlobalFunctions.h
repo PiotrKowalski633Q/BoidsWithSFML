@@ -11,7 +11,7 @@ public:
 
     static float getObjectRotationFromDirectionVector(float directionVectorX, float directionVectorY);
 
-    //a function implemented so that the varying color doesn't default to gray due to being the average of colors of nearby boids, it zeroes the smallest RGB component and maxes out the highest one
+    //a function implemented so that the varying color doesn't default to gray due to being the average of colors of nearby boids, it decreases the smallest RGB component and increases the highest one
     static void increaseColorIntensity(float &r, float &g, float &b);
 };
 

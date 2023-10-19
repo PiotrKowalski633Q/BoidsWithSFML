@@ -41,7 +41,7 @@ void Aquarium::setAllBoidsProperties()
     for (int i=0; i<mBoids.size(); i++)
     {
         mBoids[i]->setPosition(GlobalFunctions::getRandomValueInRange(mBorderLeft, mBorderRight), GlobalFunctions::getRandomValueInRange(mBorderTop, mBorderBottom));
-        mBoids[i]->setHitboxSize(GameProperties::boidHitboxSizeX, GameProperties::boidHitboxSizeY);
+        mBoids[i]->setHitboxRadius(GameProperties::boidHitboxRadius);
         mBoids[i]->setRotation(GlobalFunctions::getRandomValueInRange(0, 360));
         mBoids[i]->setBorderSightRange(GameProperties::boidBorderSightRange);
         mBoids[i]->setOtherBoidSightRange(GameProperties::boidOtherBoidSightRange);

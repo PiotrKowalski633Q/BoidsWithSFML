@@ -21,8 +21,7 @@ public:
     static float boidMovementSpeed;
     static float boidRotationSpeed;
 
-    static float boidHitboxSizeX;
-    static float boidHitboxSizeY;
+    static float boidHitboxRadius;
 
     static float boidBorderSightRange;
     static float boidOtherBoidSightRange;
